@@ -1,9 +1,9 @@
 Requirements:
 
-    tesseract >= 2.00 (with language packages)
-    python
-    pil
-    pyqt4 >= 4.3
+    tesseract 5.5.0 (with language packages)
+    python 3.11
+    pillow 11.1.0
+    pyqt6
 
 Optional:
     pil-sane
