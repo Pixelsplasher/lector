@@ -9,9 +9,10 @@
 """
 #pylint: disable-msg=C0103
 
-from PyQt5.QtGui import QPen, QFont
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import (QApplication as QA, QMenu, QGraphicsItem,
+# added QColor
+from PyQt6.QtGui import QPen, QFont, QColor
+from PyQt6.QtCore import Qt, QObject, pyqtSignal
+from PyQt6.QtWidgets import (QApplication as QA, QMenu, QGraphicsItem,
                              QGraphicsTextItem, QGraphicsRectItem)
 
 
@@ -38,9 +39,10 @@ class OcrArea(QGraphicsRectItem):
         self.newEvent.area = self
 
         #self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
-        self.setFlags(QGraphicsItem.ItemIsMovable |
-            QGraphicsItem.ItemIsFocusable |
-            QGraphicsItem.ItemIsSelectable)
+		# was QGraphicsItem.Attribute
+        self.setFlags(QGraphicsItem.GraphicsItemFlag.ItemIsMovable |
+            QGraphicsItem.GraphicsItemFlag.ItemIsFocusable |
+            QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
 
         ## set index label
         self.text = QGraphicsTextItem("%d" % index, self)
@@ -50,8 +52,9 @@ class OcrArea(QGraphicsRectItem):
         ## (such as constants in Qt) (enum?)
         self.kind = type_
 
-        pen = QPen(self.color, areaBorder, Qt.SolidLine,
-                   Qt.RoundCap, Qt.RoundJoin)
+		# was Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin
+        pen = QPen(self.color, areaBorder, Qt.PenStyle.SolidLine,
+                   Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
         self.setPen(pen)
         # self.setAcceptsHoverEvents(True)  # TODO
 
@@ -83,7 +86,8 @@ class OcrArea(QGraphicsRectItem):
         elif self.kind == 2:
             graphicsAction.setChecked(True)
 
-        selectedAction = menu.exec_(event.screenPos())
+		# was menu.exec_
+        selectedAction = menu.exec(event.screenPos())
 
         if selectedAction == removeAction:
             self.scene().removeArea(self)
@@ -102,9 +106,10 @@ class OcrArea(QGraphicsRectItem):
         self.__type = type_
 
         if self.__type == 1:
-            self.color = Qt.darkGreen
+           # was  Qt.darkGreen
+            self.color = QColor(Qt.GlobalColor.darkGreen)
         else:  ## TODO: else -> elif ... + else raise exception
-            self.color = Qt.blue
+            self.color = QColor(Qt.GlobalColor.blue)
 
         self.text.setDefaultTextColor(self.color)
 

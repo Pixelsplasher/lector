@@ -10,9 +10,13 @@
 
 import re
 
-from PyQt5.Qt import Qt, QAction
-from PyQt5.Qt import QSyntaxHighlighter, QTextCharFormat
-from PyQt5.QtCore import pyqtSignal
+# No module named 'PyQt6.Qt'
+# QAction has moved to PyQt6.QtGui
+from PyQt6.QtCore import Qt
+# QSyntaxHighlighter, QTextCharFormat moved from PyQt6.QtCore to PyQt6.QtGui
+from PyQt6.QtGui import QAction, QColor, QSyntaxHighlighter, QTextCharFormat
+# No module named 'PyQt6.Qt'
+from PyQt6.QtCore import pyqtSignal
 
 class Highlighter(QSyntaxHighlighter):
 
@@ -31,8 +35,10 @@ class Highlighter(QSyntaxHighlighter):
             return
 
         format = QTextCharFormat()
-        format.setUnderlineColor(Qt.red)
-        format.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
+		# was Qt.red
+        format.setUnderlineColor(Qt.GlobalColor.red)
+		# was QTextCharFormat.SpellCheckUnderline
+        format.setUnderlineStyle(QTextCharFormat.UnderlineStyle.SpellCheckUnderline)
 
         for word_object in re.finditer(self.WORDS, text):
             if not self.dict.check(word_object.group()):

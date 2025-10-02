@@ -13,14 +13,14 @@ import os
 import sys
 import re
 
-
-from PyQt5.Qt import Qt, QSize
-from PyQt5.QtGui import (QIcon, QFont, QTextCharFormat, QMouseEvent,
-                         QTextCursor, QTextOption, QTextDocumentWriter)
-from PyQt5.QtCore import pyqtSignal, QEvent, QIODevice, QTextStream
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QMenu, QMessageBox,
-                             QToolBar, QFileDialog, QAction, QTextEdit)
-from PyQt5.QtPrintSupport import QPrinter
+# No module named 'PyQt6.Qt'
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import (QIcon, QFont, QTextCharFormat, QMouseEvent,
+                         QTextCursor, QTextOption, QTextDocumentWriter, QAction)
+from PyQt6.QtCore import pyqtSignal, QEvent, QIODevice, QTextStream
+# QAction has moved to PyQt6.QtGui
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QMenu, QMessageBox, QToolBar, QFileDialog, QTextEdit)
+from PyQt6.QtPrintSupport import QPrinter
 
 
 # workaroung to run textwidget outside of Lector
@@ -29,7 +29,7 @@ CMD_FOLDER += "/../../"
 if CMD_FOLDER not in sys.path:
     sys.path.insert(0, CMD_FOLDER)
 
-from lector import resources_rc
+from lector.ui import resources_rc
 from lector.utils import settings
 from lector.settingsdialog import Settings
 from lector.editor.spellchecker import Highlighter, SpellAction
@@ -79,17 +79,20 @@ class EditorBar(QToolBar):
         self.whiteSpaceAction.toggled.connect(self.whiteSpace)
         self.addAction(self.whiteSpaceAction)
 
+		# was Qt.CTRL + Qt.Key_B
+		# also Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_B
         self.BoldAction = QAction(
                 QIcon(":/icons/icons/format-text-bold.png"),
                 self.tr("&Bold"), self,
-                shortcut=Qt.CTRL + Qt.Key_B,
+                shortcut="Ctrl+B",
                 triggered=self.bold, checkable=True)
         self.addAction(self.BoldAction)
 
         self.ItalicAction = QAction(self.tr("Italic"), self)
         self.ItalicAction.setIcon(
             QIcon(":/icons/icons/format-text-italic.png"))
-        self.ItalicAction.setShortcut(Qt.CTRL + Qt.Key_I)
+		# was Qt.KeyboardModifier.ControlModifier + Qt.Key.I
+        self.ItalicAction.setShortcut("Ctrl+I")
         self.ItalicAction.setCheckable(True)
         self.ItalicAction.triggered.connect(self.italic)
         self.addAction(self.ItalicAction)
@@ -98,7 +101,8 @@ class EditorBar(QToolBar):
         self.UnderlineAction.setIcon(
             QIcon(":/icons/icons/format-text-underline.png"))
         self.UnderlineAction.setCheckable(True)
-        self.UnderlineAction.setShortcut(Qt.CTRL + Qt.Key_U)
+		# was Qt.KeyboardModifier.ControlModifier + Qt.Key.U
+        self.UnderlineAction.setShortcut("Ctrl+U")
         self.UnderlineAction.triggered.connect(self.underline)
         self.addAction(self.UnderlineAction)
 
@@ -278,8 +282,9 @@ class TextWidget(QTextEdit):
         """
         option = QTextOption()
         if state:
-            option.setFlags(QTextOption.ShowTabsAndSpaces |
-                            QTextOption.ShowLineAndParagraphSeparators)
+			# was QTextOption.ShowTabsAndSpaces | QTextOption.ShowLineAndParagraphSeparators
+            option.setFlags(QTextOption.Flag.ShowTabsAndSpaces |
+                            QTextOption.Flag.ShowLineAndParagraphSeparators)
         else:
             option.setFlags(option.flags() & ~option.ShowTabsAndSpaces &
                             ~option.ShowLineAndParagraphSeparators)
@@ -293,11 +298,12 @@ class TextWidget(QTextEdit):
 
         Originally from John Schember spellchecker
         """
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.MouseButton.RightButton:
             # Rewrite the mouse event to a left button event so the cursor is
             # moved to the location of the pointer.
+			# was Qt.LeftButton
             event = QMouseEvent(QEvent.MouseButtonPress, event.pos(),
-                Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+                Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton, Qt.NoModifier)
         QTextEdit.mousePressEvent(self, event)
 
     def setEditorFont(self):
@@ -306,19 +312,19 @@ class TextWidget(QTextEdit):
     def keyPressEvent(self, event):
         if event.modifiers() & Qt.ControlModifier:
             handled = False
-            if event.key() == Qt.Key_Q:
+            if event.key() == Qt.Key.Q:
                 self.stopSpellchecker()
                 handled = True
-            elif event.key() == Qt.Key_E:
+            elif event.key() == Qt.Key.E:
                 self.initSpellchecker()
                 handled = True
-            elif event.key() == Qt.Key_F1:
+            elif event.key() == Qt.Key.F1:
                 self.toCaps()
                 handled = True
-            elif event.key() == Qt.Key_F2:
+            elif event.key() == Qt.Key.F2:
                 self.removeEOL()
                 handled = True
-            elif event.key() == Qt.Key_O and event.modifiers() & \
+            elif event.key() == Qt.Key.O and event.modifiers() & \
                     Qt.AltModifier:
                 self.openFile()
                 handled = True

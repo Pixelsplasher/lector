@@ -5,8 +5,8 @@
 """
 #pylint: disable-msg=C0103
 
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QSettings, QVariant, QDir, QStandardPaths
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import QSettings, QVariant, QDir, QStandardPaths
 
 
 def set(name, value):
@@ -18,7 +18,8 @@ def set(name, value):
 def get(name):
     """ Retrieve setting and convert result
     """
-    home_dir = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)[0]
+	# was (QStandardPaths.HomeLocation)[
+    home_dir = QStandardPaths.standardLocations(QStandardPaths.StandardLocation.HomeLocation)[0]
     stdPwlDict = home_dir + QDir.separator() + "my-dict.txt"
     settings = QSettings("Davide Setti", "Lector")
     if name == 'scanner:height':
